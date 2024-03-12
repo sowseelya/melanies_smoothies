@@ -35,6 +35,8 @@ if ingrediant_list:
     ingrediant_string=''
     for each_fruit in ingrediant_list:
         ingrediant_string+=each_fruit+' '
+        st.subheader(each_fruit + 'Nutritional Information')
+        fruityvice_response = requests.get("https://fruityvice.com/api/fruit/" + each_fruit )
 
     my_insert_stmt = """ insert into smoothies.public.orders(ingredients,name_on_order)
             values ('""" + ingrediant_string + """','"""+ name_on_smoothie+"""')"""
