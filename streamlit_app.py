@@ -20,8 +20,6 @@ st.write(
 name_on_smoothie = st.text_input('Name on smoothie')
 st.write('The name on the smoothie is:', name_on_smoothie)
 
-session = get_active_session()
-
 cnx=st.connection("snowflake")
 session = cnx.session()
 
@@ -46,24 +44,24 @@ if ingrediant_list:
         st.success('Your Smoothie is ordered!'+name_on_smoothie, icon="✅")
 
 
-if my_dataframe:
-    editable_df = st.experimental_data_editor(my_dataframe)
-    submitted=st.button('Submit')
-    if submitted:
+# if my_dataframe:
+#     editable_df = st.experimental_data_editor(my_dataframe)
+#     submitted=st.button('Submit')
+#     if submitted:
         
-        og_dataset = session.table("smoothies.public.orders")
-        edited_dataset = session.create_dataframe(editable_df)
-        try:
+#         og_dataset = session.table("smoothies.public.orders")
+#         edited_dataset = session.create_dataframe(editable_df)
+#         try:
                 
-            og_dataset.merge(edited_dataset
-                         , (og_dataset['order_uid'] == edited_dataset['order_uid'])
-                         , [when_matched().update({'ORDER_FILLED': edited_dataset['ORDER_FILLED']})]
-                        )
-            st.success('some one clicked the submit button')
-        except:
-            st.write('something Wrong')
-else:
-    st.success('No Pending orders')
+#             og_dataset.merge(edited_dataset
+#                          , (og_dataset['order_uid'] == edited_dataset['order_uid'])
+#                          , [when_matched().update({'ORDER_FILLED': edited_dataset['ORDER_FILLED']})]
+#                         )
+#             st.success('some one clicked the submit button')
+#         except:
+#             st.write('something Wrong')
+# else:
+#     st.success('No Pending orders')
 
 fruityvice_response = requests.get("https://fruityvice.com/api/fruit/watermelon")
 
