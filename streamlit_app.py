@@ -24,16 +24,17 @@ cnx=st.connection("snowflake")
 session = cnx.session()
 
 my_dataframe = session.table("SMOOTHIES.PUBLIC.FRUIT_OPTIONS").select(col('FRUIT_NAME'),col('SEARCH_ON'))
-#st.dataframe(data=my_dataframe, use_container_width=True)
-#st.stop()
+
 pd_df=my_dataframe.to_pandas()
-st.dataframe(pd_df)
+
 ingrediant_list= st.multiselect('choose upto 5 ingredients:', my_dataframe,max_selections=5)
 if ingrediant_list:
     
     ingrediant_string=''
     for each_fruit in ingrediant_list:
         ingrediant_string+=each_fruit+' '
+        search_on = pd.loc[pd_df['FRUIT_NAME']== each_fruit,'SEARCH_ON'].iloc[0]
+        st.write('The search value of fruit is' , search_on)
         st.subheader(each_fruit + 'Nutritional Information')
         fruityvice_response = requests.get("https://fruityvice.com/api/fruit/" + each_fruit )
 
@@ -46,28 +47,3 @@ if ingrediant_list:
     
         session.sql(my_insert_stmt).collect()
         st.success('Your Smoothie is ordered!'+name_on_smoothie, icon="✅")
-
-
-# if my_dataframe:
-#     editable_df = st.experimental_data_editor(my_dataframe)
-#     submitted=st.button('Submit')
-#     if submitted:
-        
-#         og_dataset = session.table("smoothies.public.orders")
-#         edited_dataset = session.create_dataframe(editable_df)
-#         try:
-                
-#             og_dataset.merge(edited_dataset
-#                          , (og_dataset['order_uid'] == edited_dataset['order_uid'])
-#                          , [when_matched().update({'ORDER_FILLED': edited_dataset['ORDER_FILLED']})]
-#                         )
-#             st.success('some one clicked the submit button')
-#         except:
-#             st.write('something Wrong')
-# else:
-#     st.success('No Pending orders')
-
-fruityvice_response = requests.get("https://fruityvice.com/api/fruit/watermelon")
-
-df_fv = st.dataframe(data=fruityvice_response.json(),use_container_width=True)
-
